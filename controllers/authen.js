@@ -9,7 +9,8 @@ const response_data = require('../helpers/response')
 const { services } = require('../configs/app_configs')
 const axios = require('axios')
 const jwt = require('jsonwebtoken')
-const { redis_base } = require('../helpers/redis_base')
+const { redis_base } = require('../helpers/redis_base');
+const Token = require('../models/Token');
 
 const login = async (req, res, next) => {
     try{
@@ -49,6 +50,73 @@ const login = async (req, res, next) => {
                 const token = await generate_token(user_data)
 
                 if (Boolean(token)) {
+                    const access_token_in_db = await Token.findOne({
+                        "user_id": user_data.user_id,
+                        "token_type": "access_token"
+                    })
+
+                    const refresh_token_in_db = await Token.findOne({
+                        "user_id": user_data.user_id,
+                        "token_type": "refresh_token"
+                    })
+                    
+
+                    if (access_token_in_db) {
+                        redis_base.del(`access_token_${access_token_in_db.token}`)
+                        const new_access_token = await Token.findOneAndUpdate(
+                            {
+                                "user_id": user_data.user_id,
+                                "token_type": "access_token"
+                            },
+                            {
+                                "token": token.access_token
+                            }
+                        )
+                    }
+                    else {
+                        const new_access_token = new Token({
+                            "user_id": user_data.user_id,
+                            "token": token.access_token,
+                            "token_type": "access_token"
+                        })
+
+                        if (!new_access_token.validateSync()) {
+                            new_access_token.save()
+                        }
+                        else {
+                            return res.json(response_data(data="token_object_invalid", status_code=4, message="Lỗi hệ thống!")) 
+                        }
+                        
+                    }
+
+                    if (refresh_token_in_db) {
+                        redis_base.del(`refresh_token_${refresh_token_in_db.token}`)
+                        const new_refresh_token = await Token.findOneAndUpdate(
+                            {
+                                "user_id": user_data.user_id,
+                                "token_type": "refresh_token"
+                            },
+                            {
+                                "token": token.refresh_token
+                            }
+                        )
+                    }
+                    else {
+                        const new_refresh_token = new Token({
+                            "user_id": user_data.user_id,
+                            "token": token.refresh_token,
+                            "token_type": "refresh_token"
+                        })
+
+                        if (!new_refresh_token.validateSync()) {
+                            new_refresh_token.save()
+                        }
+                        else {
+                            return res.json(response_data(data="token_object_invalid", status_code=4, message="Lỗi hệ thống!")) 
+                        }
+                        
+                    }
+
                     return res.json(response_data(token))
                 }
                 else {
