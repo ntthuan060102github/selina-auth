@@ -31,7 +31,7 @@ app.use(cors());
 // app.use(cors({origin: process.env.CLIENT_URL}))
 
 app.get("/", (req, res) => {
-    res.send(`Selina - Profile Service (${process.env.app_env})`)
+    res.send(`Selina - Authorization Service (${process.env.app_env})`)
 })
 
 app.use(function(req, res, next) {
@@ -43,6 +43,6 @@ app.use(function(req, res, next) {
 app.use(ROUTES_PREFIX + "", authen_router)
 
 app.listen(process.env.PORT || 8800 , () => {
-    console.log("Profile service is running...")
+    console.log("Authorization service is running...")
 })
 
