@@ -4,10 +4,9 @@ const decode_key = "selina_s4w87gyt54a8s127q08s97jy4o8n"
 const ROUTES_PREFIX = `/selina-auth-api`
 const APP_ENV = process.env.app_env || "staging"
 const SECRET_KEY = process.env.SECRET_KEY || "selina_2a9wf5498fhm48yio64ty1j68fgn48ae48r4h" 
-const REDIS_ENDPOINT_URI = process.env.REDIS_ENDPOINT_URI
-const REDIS_PASSWORD = process.env.REDIS_PASSWORD
-const redis_endpoint =  REDIS_ENDPOINT_URI
-const password = REDIS_PASSWORD || undefined
+const REDIS_ENDPOINT_URI = process.env.REDIS_ENDPOINT_URI || "redis-16376.c52.us-east-1-4.ec2.cloud.redislabs.com:16376"
+const REDIS_PASSWORD = process.env.REDIS_PASSWORD || "eHiU1tMrweOCs6qjEzhoDN4FYa0wvqwD"
+const MONGO_DB_URL = process.env.MONGO_DB_URL || "mongodb+srv://Zeta:thuan2002@cluster0.pmjo1.mongodb.net/Selina-Staging?retryWrites=true&w=majority"
 
 const services = {
     profile: {
@@ -23,10 +22,11 @@ const services = {
 module.exports = { 
     decode_key,
     encode_key, 
-    redis_endpoint,
     ROUTES_PREFIX,
     services,
-    password,
     SECRET_KEY,
-    APP_ENV
+    APP_ENV,
+    REDIS_ENDPOINT_URI,
+    REDIS_PASSWORD,
+    MONGO_DB_URL
 }

@@ -9,14 +9,19 @@ const cors = require('cors');
 
 const app = express()
 
-const { ROUTES_PREFIX } = require('./configs/app_configs')
+const { 
+    ROUTES_PREFIX,
+    MONGO_DB_URL
+} = require('./configs/app_configs')
 
-const authen_router = require('./routes/authen')
+const authen_router = require('./routers/authen')
+const permission_router = require('./routers/permission')
+const user_permission_router = require('./routers/user_permission')
 
 dotenv.config()
 
 mongoose.connect(
-    process.env.MONGO_DB_URL || "mongodb+srv://Zeta:thuan2002@cluster0.pmjo1.mongodb.net/Selina-Staging?retryWrites=true&w=majority",
+    MONGO_DB_URL,
     { useNewUrlParser: true },
     () => {
         console.log('Connected to MongoDB...')
@@ -41,6 +46,8 @@ app.use(function(req, res, next) {
 })
 
 app.use(ROUTES_PREFIX + "", authen_router)
+app.use(ROUTES_PREFIX + "", user_permission_router)
+app.use(ROUTES_PREFIX + "", permission_router)
 
 app.listen(process.env.PORT || 8800 , () => {
     console.log("Authorization service is running...")
