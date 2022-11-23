@@ -1,4 +1,4 @@
-const { check } = require('express-validator');
+const { check } = require('express-validator')
 
 const add_new_permission_validator = () => {
     return [

@@ -1,4 +1,4 @@
-const { validationResult } = require('express-validator');
+const { validationResult } = require('express-validator')
 const response_data = require('../helpers/response')
 const Permission = require('../models/Permission')
 

@@ -1,4 +1,4 @@
-const { validationResult } = require('express-validator');
+const { validationResult } = require('express-validator')
 const { 
     password_encode_key, 
     SECRET_KEY,
@@ -9,8 +9,9 @@ const response_data = require('../helpers/response')
 const { services } = require('../configs/app_configs')
 const axios = require('axios')
 const jwt = require('jsonwebtoken')
-const { redis_base } = require('../helpers/redis_base');
-const Token = require('../models/Token');
+const { redis_base } = require('../helpers/redis_base')
+const Token = require('../models/Token')
+const UserPermission = require('../models/UserPermission')
 
 const login = async (req, res, next) => {
     try{
@@ -47,6 +48,15 @@ const login = async (req, res, next) => {
             if (user_data.password === password){
                 delete user_data.password
 
+                // console.log(user_data)
+                const user_permissions = []
+                const user_permissions_obj = await UserPermission.find({email: account})
+                user_permissions_obj.forEach(
+                    user_permission_obj => user_permissions.push(
+                        user_permission_obj.permission_code
+                    )
+                )
+                user_data.permissions = user_permissions
                 const token = await generate_token(user_data)
 
                 if (Boolean(token)) {

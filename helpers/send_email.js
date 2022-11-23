@@ -18,11 +18,11 @@ const transporter = nodemailer.createTransport(email_service_config)
 const send_mail = async (to, subject, html) => {
     transporter.verify(function (error, success) {
         if (error) {
-          console.log("---", error);
+          console.log("---", error)
         } else {
-          console.log("Server is ready to take our messages");
+          console.log("Server is ready to take our messages")
         }
-    });
+    })
 
     const email_config = {
         from: account, 
