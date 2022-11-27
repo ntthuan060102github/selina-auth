@@ -47,6 +47,59 @@ const add_user_permission = async (req, res) => {
     }
 }
 
+const add_user_permissions = async (req, res) => {
+    try {
+        const input_validate = validationResult(req)
+        if (!input_validate.isEmpty()) {
+            return res.json(response_data(input_validate.array(), status_code=4))
+        }
+
+        const body = req.body
+        const permission_codes = body?.permission_codes
+        const user_id = body?.user_id
+
+        const permissions = await Permission.find(
+            {
+                permission_code: {
+                    $in: permission_codes
+                }
+            }
+        )
+
+        if (!permissions) {
+            return res.json(response_data(data="permission_invalid", status_code=4))
+        }
+
+        
+        
+        const new_user_permissions = []
+
+        for (let permission of permissions) {
+            new_user_permissions.push({
+                user_id,
+                permission_code: permission.permission_code
+            })
+        }
+
+        const insert_res = await UserPermission.insertMany(new_user_permissions)
+
+        if (insert_res) {
+            return res.json(response_data())
+        }
+        else {
+            return res.json(response_data(data="insert_fail", status_code=4, message=""))
+        }
+    }
+    catch (err) {
+        return res.json(response_data(
+                data=err.message, 
+                status_code=4, 
+                message="Lỗi hệ thống!"
+            )
+        )
+    }
+}
+
 const get_user_permissions = async (req, res) => {
     try {
         const input_validate = validationResult(req)
@@ -77,5 +130,6 @@ const get_user_permissions = async (req, res) => {
 
 module.exports = {
     add_user_permission,
-    get_user_permissions
+    get_user_permissions,
+    add_user_permissions
 }

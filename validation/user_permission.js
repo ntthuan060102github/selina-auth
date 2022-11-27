@@ -7,6 +7,13 @@ const add_user_permission_validator = () => {
     ]
 }
 
+const add_user_permissions_validator = () => {
+    return [
+        check("user_id").isInt(),
+        check("permission_codes").isArray()
+    ]
+}
+
 const get_user_permissions_validator = () => {
     return [
         check("user_id").isInt()
@@ -15,5 +22,6 @@ const get_user_permissions_validator = () => {
 
 module.exports = {
     add_user_permission_validator,
-    get_user_permissions_validator
+    get_user_permissions_validator,
+    add_user_permissions_validator
 }
