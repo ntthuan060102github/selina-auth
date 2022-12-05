@@ -9,6 +9,7 @@ const response_data = require('../helpers/response')
 const { services } = require('../configs/app_configs')
 const axios = require('axios')
 const jwt = require('jsonwebtoken')
+const { redis_base } = require('../helpers/redis_base')
 const Token = require('../models/Token')
 const UserPermission = require('../models/UserPermission')
 
@@ -36,7 +37,6 @@ const login = async (req, res, next) => {
         .catch(function (error) {
             return res.json(response_data(data="call_api_failure", status_code=4, message="Lỗi hệ thống!"))
         })
-        console.log(user_data)
 
         if (Number(user_data.status_code) === 1) {
             user_data = user_data.data
@@ -72,6 +72,7 @@ const login = async (req, res, next) => {
                     
 
                     if (access_token_in_db) {
+                        redis_base.del(`access_token_${access_token_in_db.token}`)
                         const new_access_token = await Token.findOneAndUpdate(
                             {
                                 "user_id": user_data.user_id,
@@ -99,6 +100,7 @@ const login = async (req, res, next) => {
                     }
 
                     if (refresh_token_in_db) {
+                        redis_base.del(`refresh_token_${refresh_token_in_db.token}`)
                         const new_refresh_token = await Token.findOneAndUpdate(
                             {
                                 "user_id": user_data.user_id,
@@ -155,6 +157,9 @@ const generate_token = async (user_data) => {
                 expiresIn: "3d"
             }
         )
+        await redis_base.set(`access_token_${access_token}`, JSON.stringify(user_data), {
+            EX: 3*24*60*60,
+        })
         const refresh_token = jwt.sign(
             {
                 user_data
@@ -164,6 +169,9 @@ const generate_token = async (user_data) => {
                 expiresIn: "15d"
             }
         )
+        await redis_base.set(`refresh_token_${refresh_token}`, JSON.stringify(user_data), {
+            EX: 15*24*60*60,
+        })
         return {
             access_token,
             refresh_token
@@ -177,7 +185,29 @@ const generate_token = async (user_data) => {
 
 const refresh_token = async (req, res, next) => {
     try {
-        return res.json(response_data())
+        const body = req.body
+        const refresh_token = body.refresh_token
+
+        const user_data_in_redis = await redis_base.get(`refresh_token_${refresh_token}`)
+        
+        if (!Boolean(user_data_in_redis)) {
+            return res.json(response_data(data="token_expired", status_code=3))
+        }
+        const user_data = JSON.parse(user_data_in_redis)
+
+        const access_token = jwt.sign(
+            {
+                user_data
+            }, 
+            "access_token_" + encode_key,
+            {
+                expiresIn: "3d"
+            }
+        )
+        await redis_base.set(`access_token_${access_token}`, JSON.stringify(user_data), {
+            EX: 3*24*60*60,
+        })
+        return res.json(response_data({access_token}))
     }
     catch (err) {
         console.log(err)
@@ -185,24 +215,7 @@ const refresh_token = async (req, res, next) => {
     }
 }
 
-const token_data = async (req, res, next) => {
-    try {
-        const token = req?.body?.token
-        
-        if (!token) {
-            return res.json(response_data(data={}, status_code=4, message="token?"))
-        }
-        const data = jwt.verify(token, "access_token_" + encode_key)
-        res.json(response_data(data))
-    }
-    catch (err) {
-        console.log(err)
-        return res.json(response_data(data={}, status_code=4, message=String(err)))
-    }
-}
-
 module.exports = {
     login,
-    refresh_token,
-    token_data
+    refresh_token
 }
