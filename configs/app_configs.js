@@ -2,7 +2,7 @@ const encode_key = "selina_8d58f12a545sd10cy39w4psu4cnk"
 const decode_key = "selina_s4w87gyt54a8s127q08s97jy4o8n"
 
 const ROUTES_PREFIX = `/selina-auth-api`
-const APP_ENV = process.env.app_env || "staging"
+const APP_ENV = process.env.app_env || "local"
 const SECRET_KEY = process.env.SECRET_KEY || "selina_2a9wf5498fhm48yio64ty1j68fgn48ae48r4h" 
 const REDIS_ENDPOINT_URI = process.env.REDIS_ENDPOINT_URI || "redis-16376.c52.us-east-1-4.ec2.cloud.redislabs.com:16376"
 const REDIS_PASSWORD = process.env.REDIS_PASSWORD || "eHiU1tMrweOCs6qjEzhoDN4FYa0wvqwD"
@@ -15,6 +15,9 @@ const services = {
         },
         staging: {
             domain: "https://selina-proflle-staging.herokuapp.com/selina-profile-api"
+        },
+        local: {
+            domain: "http://127.0.0.1:8801/selina-profile-api"
         }
     }
 }
