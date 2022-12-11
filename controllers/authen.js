@@ -217,10 +217,11 @@ const refresh_token = async (req, res, next) => {
 }
 
 const ping = async (req, res) => {
-    const session = get_session_data(req)
+    const session = await get_session_data(req)
     const user_role = session?.user_type || "normal_user"
+    
     return res.json(response_data(
-        data={},
+        data=session,
         status_code=1,
         message="",
         role=user_role

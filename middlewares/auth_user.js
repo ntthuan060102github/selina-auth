@@ -4,7 +4,6 @@ const { redis_base } = require("../helpers/redis_base")
 const auth_user_middleware = async (req, res, next) => {
     try {
         const access_token = req?.headers?.authorization
-        console.log(access_token)
 
         if (!access_token) {
             return res.json(response_data(
