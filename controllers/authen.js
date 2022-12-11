@@ -12,6 +12,7 @@ const jwt = require('jsonwebtoken')
 const { redis_base } = require('../helpers/redis_base')
 const Token = require('../models/Token')
 const UserPermission = require('../models/UserPermission')
+const get_session_data = require('../helpers/get_session_data')
 
 const login = async (req, res, next) => {
     try{
@@ -215,7 +216,19 @@ const refresh_token = async (req, res, next) => {
     }
 }
 
+const ping = async (req, res) => {
+    const session = get_session_data(req)
+    const user_role = session?.user_type || "normal_user"
+    return res.json(response_data(
+        data={},
+        status_code=1,
+        message="",
+        role=user_role
+    ))
+}
+
 module.exports = {
     login,
-    refresh_token
+    refresh_token,
+    ping
 }
