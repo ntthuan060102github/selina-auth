@@ -228,8 +228,27 @@ const ping = async (req, res) => {
     ))
 }
 
+const logout = async (req, res) => {
+    try {
+        let access_token = req.headers.authorization
+
+        if (access_token) {
+            access_token = access_token.replace("Bearer ", "")
+            const remove_access_token = await redis_base.del(`access_token_${access_token}`)
+
+            return res.json(response_data(remove_access_token))
+        }
+        return res.json(response_data("no_access_token", status_code=4, message="Lỗi hệ thống!"))
+    }
+    catch (err) {
+        console.log(err)
+        return res.json(response_data(data=err.message, status_code=4, message="Lỗi hệ thống!"))
+    }
+}
+
 module.exports = {
     login,
     refresh_token,
-    ping
+    ping,
+    logout
 }
