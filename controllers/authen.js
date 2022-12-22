@@ -41,6 +41,7 @@ const login = async (req, res, next) => {
 
         if (Number(user_data.status_code) === 1) {
             user_data = user_data.data
+            console.log(user_data)
             
             if (user_data === "no_data") {
                 return res.json(response_data(data="email_no_exists", status_code=4, message="Tài khoản không tồn tại!"))
@@ -127,7 +128,7 @@ const login = async (req, res, next) => {
                         }
                         
                     }
-
+                    token.user_data = user_data
                     return res.json(response_data(token))
                 }
                 else {
