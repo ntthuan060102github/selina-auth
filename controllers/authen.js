@@ -247,9 +247,37 @@ const logout = async (req, res) => {
     }
 }
 
+const get_user_tokens = async (req, res, next) => {
+    try {
+        const body = req.body
+        const user_id = Number(body.user_id)
+
+        const tokens = await Token.findOne({
+            user_id: user_id,
+            token_type: "access_token"
+        })
+
+        if (!tokens) {
+            return res.json(response_data(
+                "user_not_found",
+                4,
+                "user_not_found"
+            ))
+        }
+
+        return res.json(response_data(tokens))
+
+    }
+    catch (err) {
+        console.log(err)
+        return res.json(response_data(data=err.message, status_code=4, message="Lỗi hệ thống!"))
+    }
+}
+
 module.exports = {
     login,
     refresh_token,
     ping,
-    logout
+    logout,
+    get_user_tokens
 }
