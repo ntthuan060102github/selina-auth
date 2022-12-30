@@ -47,6 +47,10 @@ const login = async (req, res, next) => {
                 return res.json(response_data(data="email_no_exists", status_code=4, message="Tài khoản không tồn tại!"))
             }
 
+            if (user_data.account_status === "pending") {
+                return res.json(response_data(data="unverified_account", status_code=4, message="Tài khoản không tồn tại!"))
+            }
+
             if (user_data.password === password){
                 delete user_data.password
 
