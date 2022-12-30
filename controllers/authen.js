@@ -51,6 +51,10 @@ const login = async (req, res, next) => {
                 return res.json(response_data(data="unverified_account", status_code=4, message="Tài khoản không tồn tại!"))
             }
 
+            if (user_data.account_status === "banned") {
+                return res.json(response_data(data="account_banned", status_code=4, message="Tài khoản đã bị khóa!"))
+            }
+
             if (user_data.password === password){
                 delete user_data.password
 
