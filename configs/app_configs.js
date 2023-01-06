@@ -11,7 +11,7 @@ const MONGO_DB_URL = process.env.MONGO_DB_URL
 const services = {
     profile: {
         production: {
-            domain: "https://selina-proflle.herokuapp.com/selina-profile-api"
+            domain: "https://selina-profile.onrender.com/selina-profile-api"
         },
         staging: {
             domain: "https://selina-proflle-staging.herokuapp.com/selina-profile-api"
