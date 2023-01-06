@@ -2,7 +2,7 @@ const encode_key = "selina_8d58f12a545sd10cy39w4psu4cnk"
 const decode_key = "selina_s4w87gyt54a8s127q08s97jy4o8n"
 
 const ROUTES_PREFIX = `/selina-auth-api`
-const APP_ENV = process.env.app_env
+const APP_ENV = process.env.APP_ENV
 const SECRET_KEY = process.env.SECRET_KEY
 const REDIS_ENDPOINT_URI = process.env.REDIS_ENDPOINT_URI
 const REDIS_PASSWORD = process.env.REDIS_PASSWORD
