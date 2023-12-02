@@ -41,6 +41,10 @@ app.get("/", (req, res) => {
     res.send(`Selina - Authorization Service (${APP_ENV})`)
 })
 
+app.get("/health", (req, res) => {
+    res.json({})
+})
+
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*")
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
